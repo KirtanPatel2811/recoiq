@@ -1,0 +1,25 @@
+# Data (too large for git)
+data/raw/
+data/processed/
+
+# Models
+models/
+
+# MLflow
+mlruns/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Env
+.env
+*.egg-info/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
