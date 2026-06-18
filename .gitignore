@@ -2,8 +2,8 @@
 data/raw/
 data/processed/
 
-# Models
-models/
+# Saved model artifacts (pkl files) — NOT source code
+/models/
 
 # MLflow
 mlruns/
