@@ -125,7 +125,9 @@ class InteractionMatrix:
 
     @classmethod
     def load(cls, path: str | Path) -> "InteractionMatrix":
-        """Load a pickled InteractionMatrix."""
+        import src.data.interaction_matrix as _im_module
+        import sys
+        sys.modules["__main__"].InteractionMatrix = _im_module.InteractionMatrix
         with open(path, "rb") as f:
             obj = pickle.load(f)
         logger.info(f"InteractionMatrix loaded from {path} | "

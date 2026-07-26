@@ -418,19 +418,31 @@ class NCFRecommender:
     def save(self, path):
         path = Path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
-        # Save model weights separately for portability
+        # Save weights separately
         torch.save(self.model.state_dict(),
                    path.parent / (path.stem + "_weights.pt"))
+        # Temporarily detach model for clean pickling
+        model_ref = self.model
+        self.model = None
+        with open(path, "wb") as f:
+            pickle.dump(self, f)
+        self.model = model_ref
+        # Re-attach and re-save with model included
         with open(path, "wb") as f:
             pickle.dump(self, f)
         logger.info(f"NCFRecommender saved to {path}")
 
     @classmethod
     def load(cls, path) -> "NCFRecommender":
+        import src.models.ncf_model as _ncf_module
+        import sys
+        # Make NCFNet and BPRDataset findable under __main__ namespace too
+        # This fixes pickle's "Can't get attribute" when loading from another module
+        sys.modules["__main__"].NCFNet      = _ncf_module.NCFNet
+        sys.modules["__main__"].BPRDataset  = _ncf_module.BPRDataset
+        sys.modules["__main__"].NCFRecommender = _ncf_module.NCFRecommender
         with open(path, "rb") as f:
-            obj = pickle.load(f)
-        logger.info(f"NCFRecommender loaded | device: {DEVICE}")
-        return obj
+            return pickle.load(f)
 
 
 if __name__ == "__main__":
